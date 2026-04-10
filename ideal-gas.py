@@ -4,12 +4,12 @@ import matplotlib.pyplot as plt
 n = 100 # Number of molecules
 dt = 0.001 # Step size (time in second)
 
-xrange = 1e-3
-yrange = 1e-3 # Define the box size (in meter)
+xrange = 1
+yrange = 1 # Define the box size (in meter)
 
 v_rms = 10 # Average velocity (in m/s)
 
-v = (np.random.normal(0,1,size=(2,n))-0.5)*v_rms
+v = np.random.normal(v_rms/np.sqrt(2),1,size=(2,n))
 x = np.random.normal(0,1,size=(2,n))
 x[0,:] = x[0,:]*xrange
 x[1,:] = x[1,:]*yrange
@@ -58,5 +58,8 @@ for i in range(1000):
     plt.ylim(0,yrange)
     plt.scatter(x[0,:],x[1,:],c='lime',s=5)
     plt.pause(0.0001)
+
+# Root Mean Square velocity to indicate accuracy of temperature
+# print(np.sqrt((np.dot(v0,v0)+np.dot(v1,v1))/n))
 
 plt.show()
