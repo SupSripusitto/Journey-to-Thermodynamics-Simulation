@@ -1,22 +1,33 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-n = 100 # Number of molecules
-dt = 0.001 # Step size (time in second)
+n = 5000 # Number of molecules (Recommended minimum number = 550)
+t = 1000 # Time interval in second
+timepoint = 1000 # Number of snapshots
+dt = t/timepoint
 
-xrange = 1
-yrange = 1 # Define the box size (in meter)
+xrange = 10
+yrange = 10 # Define the box size in angstrom
 
-v_rms = 10 # Average velocity (in m/s)
+xrange /= 1e10
+yrange /= 1e10
 
-v = np.random.normal(v_rms/np.sqrt(2),1,size=(2,n))
+# Define temperature
+T = 300 # in Kelvin
+
+# Assume m = 1, calculate the velocity rms
+v_rms = np.sqrt(2*T*1.380649e-23) # Average velocity (in m/s)
+
+v = np.random.normal(0,v_rms/np.sqrt(2),size=(2,n))
 x = np.random.normal(0,1,size=(2,n))
 x[0,:] = x[0,:]*xrange
 x[1,:] = x[1,:]*yrange
 
+TotImpulse = 0 # Impulse from wall collisions counter
+
 plt.style.use('dark_background')
 
-for i in range(1000):
+for i in range(timepoint):
     x += v*dt
 
     # Consider x-position
@@ -57,9 +68,14 @@ for i in range(1000):
     plt.xlim(0,xrange)
     plt.ylim(0,yrange)
     plt.scatter(x[0,:],x[1,:],c='lime',s=5)
-    plt.pause(0.0001)
+    plt.pause(1/timepoint)
+
+    # Calculating impulse done by gas in this snapshot
+    TotImpulse += 2*(np.sum(np.abs(v0[xl])) + np.sum(np.abs(v0[xu])))
+    TotImpulse += 2*(np.sum(np.abs(v1[yl])) + np.sum(np.abs(v1[yu])))
 
 # Root Mean Square velocity to indicate accuracy of temperature
-# print(np.sqrt((np.dot(v0,v0)+np.dot(v1,v1))/n))
+print('v_rms =', np.sqrt((np.dot(v0,v0)+np.dot(v1,v1))/n))
 
-plt.show()
+print('T =', (np.dot(v0,v0)+np.dot(v1,v1))/n/2/1.380649e-23)
+print('P =', TotImpulse*.5/(xrange+yrange)/t)
