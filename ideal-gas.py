@@ -1,10 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-n = 5000 # Number of molecules (Recommended minimum number = 550)
-t = 1000 # Time interval in second
+n = 50000 # Number of molecules (Recommended minimum number = 550)
+t = 50 # Time interval in second
 timepoint = 1000 # Number of snapshots
-dt = t/timepoint
+dt = t/timepoint # Recommended to has dt at most at 0.1 and t at least 50
 
 xrange = 10
 yrange = 10 # Define the box size in angstrom
@@ -13,13 +13,14 @@ xrange /= 1e10
 yrange /= 1e10
 
 # Define temperature
-T = 300 # in Kelvin
+T = 340 # in Kelvin
 
 # Assume m = 1, calculate the velocity rms
 v_rms = np.sqrt(2*T*1.380649e-23) # Average velocity (in m/s)
 
 v = np.random.normal(0,v_rms/np.sqrt(2),size=(2,n))
-x = np.random.normal(0,1,size=(2,n))
+x = np.random.random((2,n))
+
 x[0,:] = x[0,:]*xrange
 x[1,:] = x[1,:]*yrange
 
